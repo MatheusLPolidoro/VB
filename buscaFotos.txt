@@ -1,0 +1,116 @@
+Function BuscaFotos()
+'Habilite a Referencia VBA Microsoft Office 12.0 object library (Ms Access 2007)
+'Ou Microsoft Office 11.0 object library (Ms Access 2003)
+Dim CaminhoDasFotos As String
+Dim JanelaDeProcura As Office.FileDialog
+Dim MeusFiltros As Office.FileDialogFilter
+
+Set JanelaDeProcura = Application.FileDialog(msoFileDialogFilePicker)
+
+With JanelaDeProcura
+.Title = "Selecione a Imagem"
+.Filters.Clear
+.Filters.Add "Image Files", "*.jpg, *.bmp, *.gif"
+
+.FilterIndex = 2
+
+.ButtonName = "Selecione"
+.InitialView = msoFileDialogViewDetails
+.InitialFileName = "C:\"
+If .Show = -1 Then
+CaminhoDasFotos = CStr(JanelaDeProcura.SelectedItems.Item(1))
+Else
+Exit Function
+End If
+Debug.Print CaminhoDasFotos
+End With
+End Function
+
+Function getFileName() As String
+    Dim fDialog    As Object
+    Set fDialog = Application.FileDialog(msoFileDialogSaveAs)
+    Dim varFile As Variant
+
+    With fDialog
+       .AllowMultiSelect = False
+       .Title = "Select File Location to Export XLSx :"
+       .InitialFileName = "jeffatwood.xlsx"
+
+    If .Show = True Then
+       For Each varFile In .SelectedItems
+         getFileName = varFile
+       Next
+    End If
+End With
+End Function
+nciona para abrir, salvar e selecionar arquivos. Eu colo em seu próprio módulo e uso em todos os bancos de dados do Access que crio. Como o código indica, ele requer o Microsoft Office 14.0 Object Library. Suponho que apenas outra opção:
+Public Function Select_File(InitPath, ActionType, FileType)
+    ' Requires reference to Microsoft Office 14.0 Object Library.
+
+    Dim fDialog As Office.FileDialog
+    Dim varFile As Variant
+
+
+    If ActionType = "FilePicker" Then
+        Set fDialog = Application.FileDialog(msoFileDialogFilePicker)
+        ' Set up the File Dialog.
+    End If
+    If ActionType = "SaveAs" Then
+        Set fDialog = Application.FileDialog(msoFileDialogSaveAs)
+    End If
+    If ActionType = "Open" Then
+        Set fDialog = Application.FileDialog(msoFileDialogOpen)
+    End If
+    With fDialog
+        .AllowMultiSelect = False
+        ' Disallow user to make multiple selections in dialog box
+        .Title = "Please specify the file to save/open..."
+        ' Set the title of the dialog box.
+        If ActionType <> "SaveAs" Then
+            .Filters.Clear
+            ' Clear out the current filters, and add our own.
+            .Filters.Add FileType, "*." & FileType
+        End If
+        .InitialFileName = InitPath
+        ' Show the dialog box. If the .Show method returns True, the
+        ' user picked a file. If the .Show method returns
+        ' False, the user clicked Cancel.
+        If .Show = True Then
+        'Loop through each file selected and add it to our list box.
+            For Each varFile In .SelectedItems
+                'return the subroutine value as the file path & name selected
+                Select_File = varFile
+            Next
+        End If
+    End With
+End Function
+
+Sub show_final_opendialog()
+Dim oFD As FileDialog
+Dim oFD1 As FileDialog
+Dim vItem As Variant
+
+Set oFD = Application.FileDialog(msoFileDialogOpen)
+oFD.ButtonName = "Press me to Go"
+oFD.Title = "Select a Single File You'd like to Open"
+oFD.AllowMultiSelect = True
+
+oFD.Filters.Clear
+oFD.Filters.Add "Special", "*.special"
+oFD.Filters.Add "Text and Excel", "*.xls, *.txt"
+
+oFD.InitialView = msoFileDialogViewDetails
+oFD.InitialFileName = "C:\Users\dailyExcel"
+
+If oFD.Show <> 0 Then
+    For Each vItem In oFD.SelectedItems
+        '
+        'add your file processing code here
+        '
+        Debug.Print vItem 'prints the file path of the first file selected
+    Next
+End If
+
+Set oFD = Nothing
+
+End Sub

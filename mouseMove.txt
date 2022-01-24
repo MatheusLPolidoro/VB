@@ -1,0 +1,334 @@
+Public Declare PtrSafe Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal y As Long) As Long 
+Public Declare PtrSafe Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
+Public Declare PtrSafe Sub mouse_event Lib "user32" (ByVal dwFlags As Long, ByVal dx As Long, ByVal dy As Long, ByValcButtons As Long, ByVal dwExtraInfo As Long)
+
+Public Const MOUSEEVENTF_LEFTDOWN = &H2
+Public Const MOUSEEVENTF_LEFTUP = &H4
+Public Const MOUSEEVENTF_RIGHTDOWN As Long = &H8
+Public Const MOUSEEVENTF_RIGHTUP As Long = &H10
+
+Public Const xlPrimaryButton = 1
+Public Const xlSecondaryButton = 2
+Public Const xlNoButton = 1
+
+Public Type POINTAPI
+X_Pos As Long
+Y_Pos As Long
+End Type
+Sub Teste()
+    Dim Controler   As Mouse
+    Set Controler = New Mouse
+    
+    Controler.MouseMove 1, 20
+End Sub
+
+Sub Testeposição()
+    Dim Controler   As Mouse
+    Set Controler = New Mouse
+    
+    Controler.GetCursor
+End Sub
+
+-------------------------------------------------------------------------------------------------------------
+
+Public Sub MouseMove(x As Long, y As Long) 
+    SetCursorPos x, y
+    pausa (1000)
+End Sub
+
+Public Sub MouseClick(ByVal Button As Byte)
+    Select Case Button
+    Case Is = 1
+        mouse_event MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0
+        mouse_event MOUSEEVENTF_LEFTUP, 0, 0, 0, 0
+    Case Is = 2
+        mouse_event MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0
+        mouse_event MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0
+    End Select
+    pausa (1000)
+End Sub
+
+Public Sub GetCursor()
+    Dim Hold    As POINTAPI
+    Dim xValue  As Long
+    Dim yValue  As Long
+    GetCursorPos Hold
+    xValue = Hold.X_Pos
+    yValue = Hold.Y_Pos
+    Planilha4.Range("a1").Value = xValue: Planilha4.Range("b1").Value = yValue
+End Sub
+
+------------------------------------------------------------------------------------------------------
+
+Option Explicit 
+Public Sub OpenApp(File As String)
+    Dim caminhoApp  As String
+    Dim objShell    As Object
+    Set objShell = CreateObject("Shell.Application")
+    On Error Resume Next
+    caminhoApp = Application.ThisWorkbook.Path & "\" & File
+    AppActivate ("Multicold - Viewer")
+    If Err.Number > 0 Then
+        Call objShell.ShellExecute(caminhoApp, "", "", "open", 3)
+        SetFocus ("Multicold - Viewer")
+        On Error GoTo -1
+    Else
+        Application.SendKeys ("%{F4}")
+        Call objShell.ShellExecute(caminhoApp, "", "", "open", 3)
+        SetFocus ("Multicold - Viewer")
+    End If
+    SetFocus ("Multicold - Viewer")
+End Sub
+
+Public Sub CloseApp()
+    On Error Resume Next
+    Shell ("cmd.exe /c taskkill /im Multicold.exe /f")
+End Sub
+
+Public Sub OpenAss()
+    SetFocus ("Multicold - Viewer")
+    SendKeys "%", True
+        SendKeys "{A}"
+        SendKeys "{B}"
+    SendKeys "{Enter}", True
+End Sub
+
+Public Sub OpenRem()
+    SetFocus ("Multicold - Viewer")
+    SendKeys "%", True
+        SendKeys "{A}"
+        SendKeys "{R}"
+    SendKeys "{Enter}", True
+End Sub
+
+Public Sub OpenFile()
+    SetFocus ("Multicold - Viewer")
+    SendKeys "%", True
+        SendKeys "{A}"
+        SendKeys "{A}"
+    pausa (1000)
+End Sub
+
+Public Sub OpenDescompact()
+    SetFocus ("Multicold - Viewer")
+    SendKeys "%", True
+        SendKeys "{A}"
+        SendKeys "{D}"
+    pausa (1000)
+End Sub
+
+Public Sub PageCopy()
+    SetFocus ("Multicold - Viewer")
+    SendKeys "%", True
+        SendKeys "{E}"
+        SendKeys "{C}"
+    SendKeys "{Enter}", True
+End Sub
+
+Public Sub SearchSpecial()
+    SetFocus ("Multicold - Viewer")
+    SendKeys "%", True
+        SendKeys "{P}"
+        SendKeys "{E}"
+    SendKeys "{Enter}", True
+    pausa (1000)
+End Sub
+
+Public Sub Execute()
+    SetCursorPos 44, 484
+    pausa (1000)
+    mouse_event MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0
+    mouse_event MOUSEEVENTF_LEFTUP, 0, 0, 0, 0
+    pausa (1000)
+End Sub
+
+Public Sub Clear()
+    SetCursorPos 45, 449
+    pausa (1000)
+    mouse_event MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0
+    mouse_event MOUSEEVENTF_LEFTUP, 0, 0, 0, 0
+    pausa (1000)
+End Sub
+
+Public Sub CloseQuery()
+    SetFocus ("Query Fácil")
+    SendKeys "%{ }"
+    SendKeys "{F}", True
+    pausa (1000)
+End Sub
+
+Public Sub Maximize(Window As String)
+    SetFocus (Window)
+    SendKeys "%{ }"
+    SendKeys "{X}", True
+    SendKeys "{ENTER}"
+End Sub
+
+Public Sub SelectAll()
+    Dim Hold    As POINTAPI
+    Dim xValue  As Long
+    Dim yValue  As Long
+    SetFocus ("Descompactar")
+    SendKeys "%{ }"
+    SendKeys "{T}", True
+    pausa (1000)
+    mouse_event MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0
+    mouse_event MOUSEEVENTF_LEFTUP, 0, 0, 0, 0
+    GetCursorPos Hold
+    xValue = Hold.X_Pos - 167
+    yValue = Hold.Y_Pos - 80
+    SetCursorPos xValue, yValue
+    pausa (1000)
+    mouse_event MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0
+    mouse_event MOUSEEVENTF_LEFTUP, 0, 0, 0, 0
+    pausa (1000)
+End Sub
+
+Public Sub SelectActivePage()
+    Dim Hold    As POINTAPI
+    Dim xValue  As Long
+    Dim yValue  As Long
+    SetFocus ("Descompactar")
+    SendKeys "%{ }"
+    SendKeys "{T}", True
+    pausa (1000)
+    mouse_event MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0
+    mouse_event MOUSEEVENTF_LEFTUP, 0, 0, 0, 0
+    GetCursorPos Hold
+    xValue = Hold.X_Pos - 167
+    yValue = Hold.Y_Pos - 175
+    SetCursorPos xValue, yValue
+    pausa (1000)
+    mouse_event MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0
+    mouse_event MOUSEEVENTF_LEFTUP, 0, 0, 0, 0
+    pausa (1000)
+End Sub
+Public Sub InputPes(Tab_Pes)
+    Dim i As Integer
+    Dim Registro As Variant
+    
+    SendKeys "+{TAB}", True
+    For Each Registro In Tab_Pes
+        AppActivate ("Montar Pesquisa Especial")
+        If i Mod 2 = 0 Then
+            SendKeys "^{HOME}", True
+        End If
+        Area_de_Transferencia (Tab_Pes(i))
+        SendKeys "^{V}", True
+        SendKeys "{TAB}", True
+        pausa (1000)
+        SendKeys "{CLEAR}", True
+        i = i + 1
+        AppActivate ("Montar Pesquisa Especial")
+        
+        If i > 0 And i Mod 2 = 0 Then
+            'Stop
+        End If
+    Next Registro
+End Sub
+
+-----------------------------------------------------------------------------------------------------------
+
+Option Explicit 
+Public Declare Function BlockInput Lib "user32" (ByVal fBlock As Long) As Long
+Global Tab_Pes()       As Variant
+Global Data_Rel        As String
+Global Registro        As Variant
+Global QuitAll         As Boolean
+
+Sub Baixar_relatorios()
+    Dim MulticoldApp    As Multicold                                'Define MulticoldApp como um novo Objeto da classe Multicold
+    Set MulticoldApp = New Multicold                                'Instancia da classe Multicold
+    
+    'Tab_Pes_Multicold                                               'Localiza os arquivos conforme a data escolhida
+    'If QuitAll = True Then Exit Sub
+    
+    MulticoldApp.OpenApp ("MultiCold.exe.lnk")
+    
+    BlockInput True                                                 'Bloquear o mouse e entrada do teclado
+    
+    MulticoldApp.OpenAss
+    MulticoldApp.SearchSpecial
+    MulticoldApp.Maximize ("Montar Pesquisa Especial")
+    MulticoldApp.Execute
+    MulticoldApp.CloseQuery
+    MulticoldApp.OpenDescompact
+    MulticoldApp.SelectAll
+    'MulticoldApp.InputPes (Tab_Pes)
+    MulticoldApp.CloseApp
+    
+    BlockInput False                                                'Desbloquear o mouse e entrada do teclado
+    
+    Set MulticoldApp = Nothing                                      'Destruir o Objeto/Liberar memória(Opcional, mas recomendado)
+    
+End Sub
+
+Sub Tab_Pes_Multicold()
+    
+    Dim Base            As Range
+    Dim Ref             As Range
+    
+    Dim Ultlinha        As Long
+    Dim UltColuna       As Long
+    
+    Dim i               As Integer
+    Dim ArqNome         As String
+    
+    Dim Registro        As Variant
+    Dim cell            As Variant
+    
+    Dim Data            As Date
+    
+    Ultlinha = Planilha2.Cells(Rows.Count, 1).End(xlUp).Row         'Define a ultima linha do relatorio
+    Planilha2.Range(Cells(2, 2), Cells(Ultlinha, 2)).ClearContents  'Limpa os caminhos anteriores
+    
+    If Planilha2.Cells(Ultlinha, 1).Value <> "" Then                'Tomada de decisão a depender do valor da planilha
+        Set Ref = Planilha2.Range(Cells(2, 1), Cells(Ultlinha, 2))
+    Else
+        MsgBox "Não foi preenchido nenhum relatório na coluna 'A'!", 16, "Baixar Relatório"
+        QuitAll = True
+        Exit Sub
+    End If
+    Set Base = Planilha1.Range("A1").CurrentRegion                  'Define a tabela que possui os arquivos do diretorio
+    
+    On Error Resume Next                                            'Define a data do relatorio que o usuário deseja baixar
+    
+    Data = Application.InputBox("Digite a data dos relatórios que deseja baixar: ", "Baixar Relatório", _
+    Format(Date - 1, "dd/mm/yyyy"), , , , 1)
+    If Data = False Then
+        MsgBox "Operação Cancelada", 16, "Baixar Relatório"
+        QuitAll = True
+        Exit Sub
+    End If
+    
+    If Valida_Data(Data) = False Then                               'Tomada de decisão a depender do valor da Data
+        MsgBox "Não foi preenchida uma data valida!", 16, "Baixar Relatório"
+        QuitAll = True
+        Exit Sub
+    End If
+    
+    QuitAll = False
+    Data_Rel = Format(Data, "yyyymmdd")                             'Formata a data para colocar no nome do arquivo
+    
+    i = 0
+    
+    Application.ScreenUpdating = False
+    For Each cell In Ref
+        If i Mod 2 = 0 Then
+            ReDim Preserve Tab_Pes(i)
+            Tab_Pes(i) = cell.Value
+        Else
+            ReDim Preserve Tab_Pes(i)
+            ArqNome = "*" & Tab_Pes(i - 1) & "_" & Data_Rel & "*.DAT"
+            cell.Value = WorksheetFunction.IfError(WorksheetFunction.VLookup(ArqNome, Base, 7, 0), "")
+            If cell.Value = "" Then
+                MsgBox "Atenção! Não foi possivel localizar o relatório " & Tab_Pes(i - 1) & " na rede!", 16, "Baixar Relatório"
+                QuitAll = True
+            End If
+            Tab_Pes(i) = cell.Value
+        End If
+        i = i + 1
+    Next cell
+    Application.ScreenUpdating = True
+
+End Sub

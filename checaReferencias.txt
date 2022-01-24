@@ -1,0 +1,24 @@
+Public Sub ChecaReferencias() 
+Dim mensagem As String 
+
+"Faz a referência ao projeto VBA Dim vbProj As VBProject "A referencia em si 
+
+Dim chkRef As Reference
+
+ "Seta a variável para o projeto da pasta de trabalho ativa.
+
+ vbProj = ActiveWorkbook.VBProject 
+
+"Checa as referências selecionadas (veja na caixa de diálogo Referências) 
+
+For Each chkRef In vbProj.References 
+"monta a string que conterá o nome de todas as referências
+
+ mensagem = mensagem & " " & chkRef.Name & Chr(13)
+
+ Next 
+
+"Mostra a mensagem com o nome das referência selecionadas
+ MsgBox(mensagem)
+
+ End Sub
