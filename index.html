@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VB_matheus</title>
+    <style>
+        body{background-color: #212121;color: aqua; font-size: 15px;text-decoration: none; font-family: 'Courier New', Courier, monospace;}
+        a {color: aqua; font-size: 30px;text-decoration: none; font-family: 'Courier New', Courier, monospace;}
+        ul{list-style: none;}
+    </style>    
+</head>
+<body>
+<pre>
+Function vb_Type(var As Variant)
+    'retorna o tipo da variavel
+    Dim dict As Object
+    
+    Set dict = CreateObject("Scripting.Dictionary")
+    dict.Add 0, "Empty"
+    dict.Add 1, "Null"
+    dict.Add 2, "Integer"
+    dict.Add 3, "Long"
+    dict.Add 4, "Single"
+    dict.Add 5, "Double"
+    dict.Add 6, "Currency"
+    dict.Add 7, "Date"
+    dict.Add 8, "String"
+    dict.Add 9, "Object"
+    dict.Add 10, "Error"
+    dict.Add 11, "Boolean"
+    dict.Add 12, "Variant"
+    dict.Add 13, "DataObject"
+    dict.Add 14, "Decimal"
+    dict.Add 17, "Byte"
+    dict.Add 20, "LongLong"
+    dict.Add 36, "UserDefinedType"
+    dict.Add 8192, "Array"
+    vb_Type = dict.Item(VarType(var))
+End Function
+
+
+Function last_row(my_sheet As Object, Optional col) As Long
+    'retorna a ultima linha planilha
+    If IsMissing(col) Then col = 1
+    my_sheet.Activate
+    last_row = my_sheet.Cells(my_sheet.Rows().Count, col).End(xlUp).row()
+    
+End Function
+
+
+Function last_col(my_sheet As Object, Optional row)
+    'retorna a ultima coluna planilha
+    
+    If IsMissing(row) Then row = 1
+    my_sheet.Activate
+    last_col = my_sheet.Cells(row, my_sheet.Columns().Count).End(xlToLeft).Column()
+    
+End Function
+
+
+Sub my_clear(my_sheet As Object, row_1 As Variant, col_1 As Variant, row_2 As Variant, col_2 As Variant)
+    'limpa uma range de uma planilha
+    
+    my_sheet.Range(Cells(row_1, col_1), Cells(row_2, col_2)).clear
+    
+End Sub
+
+
+Sub main()
+
+    ' --- planilha1
+    Dim lin_fim, col_fim As Long
+    Dim cpf, conta As Range
+    
+    lin_fim = last_row(Planilha1)
+    col_fim = last_col(Planilha1)
+    
+    ' --- planilha2
+    Dim lin_fim_2, col_fim_2 As Long
+    
+    lin_fim_2 = last_row(Planilha2)
+    
+    my_clear Planilha2, 2, 1, lin_fim_2 + 1, 2
+    
+    lin_fim_2 = 1
+    
+    Planilha1.Activate
+    Set cpf = Planilha1.Range(Cells(2, 1), Cells(lin_fim, 1))
+    
+    For i = 2 To col_fim Step 1
+        Planilha1.Activate
+        Set conta = Planilha1.Range(Cells(2, i), Cells(lin_fim, i))
+        
+        Planilha2.Activate
+        Planilha2.Range(Cells(lin_fim_2 + 1, 1), Cells(lin_fim_2 + cpf.Count, 2)).NumberFormat = "@"
+        Planilha2.Range(Cells(lin_fim_2 + 1, 1), Cells(lin_fim_2 + cpf.Count, 1)) = cpf.Value
+        Planilha2.Range(Cells(lin_fim_2 + 1, 2), Cells(lin_fim_2 + cpf.Count, 2)) = conta.Value
+        lin_fim_2 = last_row(Planilha2)
+    Next i
+    
+    MsgBox "Fim"
+End Sub
+</pre>
+</body>
+</html>
